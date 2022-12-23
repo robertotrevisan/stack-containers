@@ -1,0 +1,153 @@
+version: '3'
+## https://www.bogotobogo.com/DevOps/Docker/Docker_Prometheus_Grafana.php
+
+volumes:
+  prometheus_data: {}
+  grafana_data: {}
+
+services:
+     
+  prometheus:
+    image: prom/prometheus:v2.17.1
+    container_name: prometheus
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    restart: unless-stopped
+    #expose:
+    #  - 9090
+    networks:
+      - traefik-proxy
+    labels:
+      - "org.label-schema.group: monitoring"
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik-proxy"
+      - "traefik.http.routers.prometheus.entrypoints=http"
+      - "traefik.http.routers.prometheus.rule=Host(`prometheus.local.test`)"
+      - "traefik.http.services.prometheus.loadbalancer.server.port=9090"
+
+  alertmanager:
+    image: prom/alertmanager:v0.20.0
+    container_name: alertmanager
+    volumes:
+      - ./alertmanager:/etc/alertmanager
+    command:
+      - '--config.file=/etc/alertmanager/config.yml'
+      - '--storage.path=/alertmanager'
+    restart: unless-stopped
+    #expose:
+    #  - 9093
+    networks:
+      - traefik-proxy
+    labels:
+      - "org.label-schema.group: monitoring"
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik-proxy"
+      - "traefik.http.routers.alertmanager.entrypoints=http"
+      - "traefik.http.routers.alertmanager.rule=Host(`alertmanager.local.test`)"
+      - "traefik.http.services.alertmanager.loadbalancer.server.port=9093"
+
+  nodeexporter:
+    image: prom/node-exporter:v0.18.1
+    container_name: nodeexporter
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
+    restart: unless-stopped
+    #expose:
+    #  - 9100
+    networks:
+      - traefik-proxy
+    labels:
+      - "org.label-schema.group: monitoring"
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik-proxy"
+      - "traefik.http.routers.nodeexporter.entrypoints=http"
+      - "traefik.http.routers.nodeexporter.rule=Host(`nodeexporter.local.test`)"
+      - "traefik.http.services.nodeexporter.loadbalancer.server.port=9100"
+
+  cadvisor:
+    image: gcr.io/google-containers/cadvisor:v0.34.0
+    container_name: cadvisor
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker:/var/lib/docker:ro
+      - /cgroup:/cgroup:ro #doesn't work on MacOS only for Linux
+    restart: unless-stopped
+    #expose:
+    #  - 8080
+    networks:
+      - traefik-proxy
+    labels:
+      - "org.label-schema.group: monitoring"
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik-proxy"
+      - "traefik.http.routers.cadvisor.entrypoints=http"
+      - "traefik.http.routers.cadvisor.rule=Host(`cadvisor.local.test`)"
+      - "traefik.http.services.cadvisor.loadbalancer.server.port=8080"
+
+  pushgateway:
+    image: prom/pushgateway:v1.2.0
+    container_name: pushgateway
+    restart: unless-stopped
+    #expose:
+    #  - 9091
+    networks:
+      - traefik-proxy
+    labels:
+      - "org.label-schema.group: monitoring"
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik-proxy"
+      - "traefik.http.routers.pushgateway.entrypoints=http"
+      - "traefik.http.routers.pushgateway.rule=Host(`pushgateway.local.test`)"
+      - "traefik.http.services.pushgateway.loadbalancer.server.port=9901"
+
+  grafana:
+    image: grafana/grafana:6.7.2
+    container_name: grafana
+    env_file:
+      - .env
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    environment:
+      - GF_SECURITY_ADMIN_USER=${ADMIN_USER}
+      - GF_SECURITY_ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_INSTALL_PLUGINS=grafana-piechart-panel
+    restart: unless-stopped
+    #expose:
+    #  - 3000
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "tcp://localhost:12201"
+        tag: meu-primeiro-site
+    networks:
+      - traefik-proxy
+    labels:
+      - "org.label-schema.group: monitoring"
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik-proxy"
+      - "traefik.http.routers.grafana.entrypoints=http"
+      - "traefik.http.routers.grafana.rule=Host(`grafana.local.test`)"
+      - "traefik.http.services.grafana.loadbalancer.server.port=3000"
+
+networks:
+  traefik-proxy:
+    external: true

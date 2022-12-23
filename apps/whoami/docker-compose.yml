@@ -1,0 +1,32 @@
+version: '3.5'
+
+services:
+  whoami:
+    image: traefik/whoami
+    #build: 
+        #    context: .
+        #    dockerfile: ./dockerfile-app
+    container_name: whoami
+    restart: always
+    #env_file: .env
+    #environment:
+    #  HOST_DB: $HOST_DB
+    #ports:
+    #  - "15432:5432"
+    networks:
+      - traefik-proxy
+    labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=traefik-proxy"
+        - "traefik.http.routers.whoami.entrypoints=http"
+        - "traefik.http.routers.whoami.rule=Host(`whoami.local.test`)"
+        - "traefik.http.middlewares.whoami-https-redirect.redirectscheme.scheme=https"
+        - "traefik.http.routers.whoami.middlewares=whoami-https-redirect"
+        - "traefik.http.routers.whoami-secure.entrypoints=https"
+        - "traefik.http.routers.whoami-secure.rule=Host(`whoami.local.test`)"
+        - "traefik.http.routers.whoami-secure.tls=true"
+        #- "traefik.http.routers.whoami-secure.tls.certresolver=http"
+
+networks:
+  traefik-proxy:
+    external: true

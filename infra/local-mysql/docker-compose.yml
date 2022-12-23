@@ -1,0 +1,55 @@
+version: '3.5'
+
+volumes:
+    mysql-data:
+        driver: local
+
+services:
+    # Mysql 8.0
+    mysql:
+        #image: mariadb:10.5
+        image: mysql:8
+        container_name: local-mysql
+        volumes:
+            - mysql-data:/var/lib/mysql
+            - ./my_custom.cnf:/etc/mysql/my.cnf
+        command: ''            
+        #command: '--default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_swedish_ci'
+        restart: unless-stopped
+        env_file: .env
+        cap_add:
+            - SYS_NICE  # CAP_SYS_NICE
+        networks:
+            - traefik-proxy
+
+    # PHPMyAdmin
+    phpmyadmin:
+        image: phpmyadmin
+        container_name: phpmyadmin
+        links: 
+            - mysql:db
+        env_file: .env
+        environment:
+            - PMA_ABSOLUTE_URI=http://$PMA_URL
+            - UPLOAD_LIMIT=200M
+        volumes:
+            - ./name.conf:/etc/apache2/conf-enabled/name.conf
+        restart: unless-stopped
+        labels:
+            - "traefik.enable=true"
+            - "traefik.docker.network=traefik-proxy"
+            - "traefik.http.routers.phpmyadmin.entrypoints=http"
+            - "traefik.http.routers.phpmyadmin.rule=Host(`$PMA_URL`)"
+            - "traefik.http.middlewares.phpmyadmin-https-redirect.redirectscheme.scheme=https"
+            - "traefik.http.routers.phpmyadmin.middlewares=phpmyadmin-https-redirect"
+            - "traefik.http.routers.phpmyadmin-secure.entrypoints=https"
+            - "traefik.http.routers.phpmyadmin-secure.rule=Host(`$PMA_URL`)"
+            - "traefik.http.routers.phpmyadmin-secure.tls=true"
+            #- "traefik.http.routers.phpmyadmin-secure.tls.certresolver=http"
+
+        networks:
+            - traefik-proxy
+
+networks:
+  traefik-proxy:
+    external: true

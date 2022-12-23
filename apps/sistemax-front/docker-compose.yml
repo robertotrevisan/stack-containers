@@ -1,0 +1,28 @@
+version: '3.5'
+
+services:
+  sistemax:
+    #image: traefik/whoami
+    build: 
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: sistemax
+    restart: always
+    #env_file: .env
+    networks:
+      - traefik-proxy
+    labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=traefik-proxy"
+        - "traefik.http.routers.sistemax.entrypoints=http"
+        - "traefik.http.routers.sistemax.rule=Host(`sistemax.local.test`)"
+        - "traefik.http.middlewares.sistemax-https-redirect.redirectscheme.scheme=https"
+        - "traefik.http.routers.sistemax.middlewares=sistemax-https-redirect"
+        - "traefik.http.routers.sistemax-secure.entrypoints=https"
+        - "traefik.http.routers.sistemax-secure.rule=Host(`sistemax.local.test`)"
+        - "traefik.http.routers.sistemax-secure.tls=true"
+        #- "traefik.http.routers.sistemax-secure.tls.certresolver=http"
+
+networks:
+  traefik-proxy:
+    external: true

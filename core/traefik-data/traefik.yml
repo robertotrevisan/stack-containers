@@ -1,0 +1,50 @@
+api:
+  insecure: true
+  dashboard: true
+
+entryPoints:
+  rtmp:
+    address: ":1935"
+  http:
+    address: ":80"
+  https:
+    address: ":443"
+  metrics:
+    address: ":8082"
+
+metrics:
+  prometheus:
+    buckets:
+      - 0.1
+      - 0.3
+      - 1.2
+      - 5.0
+    entryPoint: metrics
+
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    exposedByDefault: false
+    watch: true
+  file:
+    filename: /etc/traefik/config.yml
+    watch: true
+
+log:
+  level: "DEBUG"
+  format: "json"
+
+certificatesResolvers:
+  http:
+    acme:
+      email: trevisan@gmail.com
+      storage: acme.json
+      httpChallenge:
+        entryPoint: http
+  http-dev:
+    acme:
+      caServer: https://acme-staging-v02.api.letsencrypt.org/directory
+      email: trevisan@gmail.com
+      storage: acme.json
+      httpChallenge:
+        entryPoint: http
