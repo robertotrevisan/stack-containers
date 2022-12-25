@@ -10,6 +10,7 @@ Provisionamento de containers gerenciado pelo portainer + traefik usando TLS.
 - mkcert - ferramenta simples para criar certificados de desenvolvimento localmente confiáveis.  https://github.com/FiloSottile/mkcert
 
 Basicamente criamos um deploy do traefik para gerenciar as coenxoes com um dominio local. (*.local.test)
+[[./docs/images/traefik-architecture.webp|ALT TEXT]]
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./docs/images/traefik-architecture.webp">
 </picture>
