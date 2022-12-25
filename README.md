@@ -13,8 +13,15 @@ Basicamente criamos um deploy do traefik para gerenciar as coenxoes com um domin
 
 ![](./docs/images/traefik-architecture.webp)
 
+Passos a seguir consideram já o Docker instalado no sistema.
 
 ###  gerando certificado local
+Instalar o mkcert no sistema operacional utilizado:
+Windows (utilizando winget): abra o prompt de comando do windows e digite:
+```
+winget install mkcert -s winget 
+```
+
 Instalando autoridade certificadora local
 ```
 mkcert -install
