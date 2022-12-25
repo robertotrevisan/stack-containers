@@ -27,7 +27,7 @@ Instalando autoridade certificadora local
 mkcert -install
 ```
 Gerando certificado para os dominios (exemplo utilizado: local.test).
-Gerar o o certifcado a partir da pasta `core`.
+Gerar o o certifcado a partir da pasta `core`. Os certificados vao ser armazenados na pasta `certs`.
 
 ```
 cd core
