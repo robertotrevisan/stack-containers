@@ -7,7 +7,7 @@ Provisionamento de containers gerenciado pelo portainer + traefik usando TLS.
 - Docker-compose - https://docs.docker.com/compose/
 - Portainer - https://www.portainer.io/
 - Traefik - https://github.com/traefik/traefik
-- mkcert - ferramenta simples para criar certificados de desenvolvimento localmente confiáveis.  https://github.com/FiloSottile/mkcert
+- mkcert - ferramenta para criar certificados de desenvolvimento localmente confiáveis.  https://github.com/FiloSottile/mkcert
 - edição do arquivo `hosts` do sistema (simulando um DNS local)
 
 Basicamente criamos um deploy do traefik para gerenciar as coenxoes com um dominio local. (*.local.test)
