@@ -80,14 +80,14 @@ services:
       - "traefik.http.services.nodeexporter.loadbalancer.server.port=9100"
 
   cadvisor:
-    image: gcr.io/google-containers/cadvisor:v0.34.0
+    image: zcube/cadvisor:latest
     container_name: cadvisor
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:rw
       - /sys:/sys:ro
       - /var/lib/docker:/var/lib/docker:ro
-      - /cgroup:/cgroup:ro #doesn't work on MacOS only for Linux
+      #- /cgroup:/cgroup:ro #doesn't work on MacOS only for Linux
     restart: unless-stopped
     #expose:
     #  - 8080
@@ -133,11 +133,11 @@ services:
     restart: unless-stopped
     #expose:
     #  - 3000
-    logging:
-      driver: gelf
-      options:
-        gelf-address: "tcp://localhost:12201"
-        tag: meu-primeiro-site
+    #logging:
+    #  driver: gelf
+    #  options:
+    #    gelf-address: "tcp://localhost:12201"
+    #    tag: meu-primeiro-site
     networks:
       - traefik-proxy
     labels:
@@ -146,6 +146,13 @@ services:
       - "traefik.docker.network=traefik-proxy"
       - "traefik.http.routers.grafana.entrypoints=http"
       - "traefik.http.routers.grafana.rule=Host(`grafana.local.test`)"
+      
+      - "traefik.http.middlewares.grafana-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.grafana.middlewares=whoami-https-redirect"
+      - "traefik.http.routers.grafana-secure.entrypoints=https"
+      - "traefik.http.routers.grafana-secure.rule=Host(`grafana.local.test`)"
+      - "traefik.http.routers.grafana-secure.tls=true"
+
       - "traefik.http.services.grafana.loadbalancer.server.port=3000"
 
 networks:
