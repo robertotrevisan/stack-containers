@@ -1,6 +1,6 @@
 
 
-# exemplo a inserir no arquivo hosts  do sistema operacional
+# exemplo a inserir no arquivo hosts do sistema operacional
 
 127.0.0.1       portainer.local.test
 127.0.0.1       traefik.local.test

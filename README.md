@@ -53,7 +53,19 @@ Iniciar a stack core com o parametro -d (Detached mode) rodando em background. A
 docker-compose up -d
 ```
 
-Após editar o arquivo hosts e inserir os dominios locais, abrir o navegador e digitar a url:
+Editar o arquivo hosts e inserir os dominios locais (template pode ser encontrado na poasta docs):
+
+Windows - abrir o nodepad como administrador
+```
+C:\Windows\System32\drivers\etc\hosts
+```
+
+Linux e Mac - editar usando sudo
+```
+\etc\hosts
+```
+
+Abrir o navegador e digitar a url:
 ```
 http://portainer.local.test
 ```
