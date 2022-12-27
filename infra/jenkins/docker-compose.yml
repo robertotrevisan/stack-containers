@@ -1,0 +1,54 @@
+version: '3.5'
+
+volumes: 
+  jenkins-data: {}
+  jenkins-docker-certs: {}
+
+services:  
+  jenkins:
+    image: jenkins/jenkins:lts
+    #build:
+    #  context: .
+    #image: myjenkins-blueocen:1.1
+    container_name: jenkins
+    privileged: true
+    user: root
+    #ports:
+    #  - 8083:8080
+    #  - 50003:50000
+    volumes:
+      - jenkins-data:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+    #  - jenkins
+      - traefik-proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik-proxy"
+      - "traefik.http.routers.jenkins.rule=Host(`jenkins.local.test`)"
+      - "traefik.http.routers.jenkins.entrypoints=http"
+      - "traefik.http.routers.jenkins.middlewares=jenkins-https-redirect"
+      - "traefik.http.middlewares.jenkins-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.jenkins-secure.rule=Host(`jenkins.local.test`)"
+      - "traefik.http.routers.jenkins-secure.entrypoints=https"
+      - "traefik.http.routers.jenkins-secure.tls=true"
+      #- "traefik.http.routers.jenkins-secure.tls.certresolver=http"
+      - "traefik.http.services.jenkins-secure.loadbalancer.server.port=8080"
+
+  #agent:
+  #    image: jenkins/ssh-agent:jdk11
+  #    privileged: true
+  #    user: root
+  #    container_name: agent
+  #    expose:
+  #      - 22
+  #    environment:
+  #      - JENKINS_AGENT_SSH_PUBKEY=ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCWPyElMa6hHKbJcnTwZ5ve9Nf3ygYXBbXvGFWAu+hBkPKrrGb6/FIV+UqJ3pUUe789loFy/TIv/4ZpOHujKJeBnRsW7P5kacqiubvi2HNY5+y5sMcGQ4f8pQcPZhH0QCBN7P5RLoYriBoRcbO5+Xrh4p0JvkaFtCueU/8/RqGNvesCdA5OYptYTLO0rQlzzT7QFyINsLbpGU0hjnd32sT7aGDISKcleVUydm2Q0/s8LtCG9/3ab6r68oM7gIKZ7tye4X4xo1Gu3DFxN2qB/TfMjsetM3NJXb0Rf+IRj2dtgh6aGgZdlKBrxOuGr297OsjnEmEj0JAphZmnrC06l9g1BqdZJU7AvPwP6J2D8wqTpx4vwkkGYuhYH3myln9Hl0+fZf8mEaZK30ecejJnqALv8Rk96EkU2aJQipJ6oiyflw2eHIPlGcLD46NCzWahGiUpgVMqt8YmkOv+g+HGP3cGbSMmjj+uFn4fMWeI/GCXhjNyuCjXKxy+15opIlrExCc= vagrant@vm01
+  #    networks:
+  #      - jenkins
+
+networks:
+  traefik-proxy:
+    external: true
+  #jenkins:
+  #  external: true
