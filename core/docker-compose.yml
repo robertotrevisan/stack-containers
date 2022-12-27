@@ -22,7 +22,7 @@ services:
       # Map the certificats into the container
       - ./certs:/etc/certs:ro
       - ./traefik-data/acme.json:/acme.json
-      #- "../infra/registry/auth/registry.password:/auth/registry.password"
+      - ./users.auth:/auth/users.auth
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.traefik.entrypoints=http"
@@ -34,7 +34,8 @@ services:
       - "traefik.http.routers.traefik-secure.tls=true"
       #- "traefik.http.routers.traefik-secure.tls.certresolver=http"
       - "traefik.http.routers.traefik-secure.service=api@internal"
-      - "traefik.http.middlewares.traefik-auth.basicauth.users=admin:$$apr1$$Bxt9JT6R$$6..T7WDO1igkmQTNnD1ZL/"
+      #- "traefik.http.middlewares.traefik-auth.basicauth.users=admin:$$$2y$05$GsSqtllCQEOtchOIUjsDO.G8pxxkFZPBcx53bjtlYC/XFtz6sUQqW/"
+      - "traefik.http.middlewares.traefik-auth.basicauth.usersfile=/auth/users.auth"
       - "traefik.http.middlewares.traefik-https-redirect.redirectscheme.scheme=https"
 
       #- "traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)"
