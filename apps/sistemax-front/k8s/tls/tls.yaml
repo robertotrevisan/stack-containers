@@ -1,0 +1,22 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: letsencrypt-dev-issuer
+  namespace: sistemax
+spec:
+  ca:
+    secretName: my-ca-tls-secret
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: letsencrypt-dev-certificate
+  namespace: sistemax
+spec:
+  secretName: tls-localhost-dev
+  dnsNames:
+    - sistemax.vagrant.test
+    - sistemax.local.test
+  issuerRef:
+    name: letsencrypt-dev-issuer
+    kind: Issuer

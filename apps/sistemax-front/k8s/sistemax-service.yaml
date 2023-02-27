@@ -1,0 +1,12 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: sistemax-service-master
+  namespace: sistemax
+spec:
+  selector:
+    app: sistemax-master
+  type: NodePort
+  ports:
+  - name: front
+    port: 80

@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sistemax-deployment-master
+  namespace: sistemax
+spec:
+  selector:
+    matchLabels:
+      app: sistemax-master
+  template:
+    metadata:
+      labels:
+        app: sistemax-master
+    spec:
+      containers:
+      - name: sistemax-container-master
+        image: robertotrevisan/sistemax:latest
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 08
