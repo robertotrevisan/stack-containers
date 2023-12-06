@@ -32,7 +32,7 @@ Gerar o o certifcado a partir da pasta `core`. Os certificados vao ser armazenad
 
 ```
 cd core
-mkcert -cert-file certs/local-cert.pem -key-file certs/local-key.pem "local.test" "*.local.test"
+mkcert -cert-file certs/local-cert.pem -key-file certs/local-key.pem "local.test" "*.local.test" "cloud.local" "*.cloud.local"
 ```
 
 ###  Iniciando o traefik e o portainer

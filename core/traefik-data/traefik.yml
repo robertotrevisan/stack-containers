@@ -31,20 +31,20 @@ providers:
     watch: true
 
 log:
-  level: "DEBUG"
+  level: "ERROR"
   format: "json"
 
 certificatesResolvers:
-  http:
+  letsencrypt:
     acme:
-      email: trevisan@gmail.com
+      email: myemail@gmail.com
       storage: acme.json
       httpChallenge:
         entryPoint: http
-  http-dev:
+  letsencrypt-dev:
     acme:
       caServer: https://acme-staging-v02.api.letsencrypt.org/directory
-      email: trevisan@gmail.com
+      email: myemail@gmail.com
       storage: acme.json
       httpChallenge:
         entryPoint: http

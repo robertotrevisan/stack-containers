@@ -15,11 +15,11 @@ services:
         - "traefik.enable=true"
         - "traefik.docker.network=traefik-proxy"
         - "traefik.http.routers.sistemax.entrypoints=http"
-        - "traefik.http.routers.sistemax.rule=Host(`sistemax.local.test`)"
+        - "traefik.http.routers.sistemax.rule=Host(`sistemax.cloud.local`)"
         - "traefik.http.middlewares.sistemax-https-redirect.redirectscheme.scheme=https"
         - "traefik.http.routers.sistemax.middlewares=sistemax-https-redirect"
         - "traefik.http.routers.sistemax-secure.entrypoints=https"
-        - "traefik.http.routers.sistemax-secure.rule=Host(`sistemax.local.test`)"
+        - "traefik.http.routers.sistemax-secure.rule=Host(`sistemax.cloud.local`)"
         - "traefik.http.routers.sistemax-secure.tls=true"
         #- "traefik.http.routers.sistemax-secure.tls.certresolver=http"
 
