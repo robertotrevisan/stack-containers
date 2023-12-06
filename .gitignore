@@ -1,3 +1,4 @@
 .env
 *.pem
 portainer-data
+.DS_Store
