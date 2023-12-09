@@ -59,6 +59,9 @@ Windows - abrir o nodepad como administrador
 ```
 C:\Windows\System32\drivers\etc\hosts
 ```
+```
+Start-Process notepad -Argument C:\Windows\System32\drivers\etc\hosts -Verb RunAs
+```
 
 Linux e Mac - editar usando sudo
 ```
